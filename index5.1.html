@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Список задач</title>
+    <style>
+      .completed {
+        text-decoration: line-through;
+        color: gray;
+      }
+
+      #taskInput {
+        width: 200px;
+        margin-right: 10px;
+      }
+
+      #taskList {
+        list-style-type: none;
+        padding: 0;
+      }
+
+      #taskList li {
+        margin: 5px 0;
+      }
+
+      button {
+        margin: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Список задач</h1>
+    <input type="text" id="taskInput" placeholder="Введите новую задачу" />
+    <button id="addTaskButton">Добавить задачу</button>
+
+    <div>
+      <button onclick="filterTasks('all')">Показать все</button>
+      <button onclick="filterTasks('completed')">Показать выполненные</button>
+      <button onclick="filterTasks('incomplete')">
+        Показать невыполненные
+      </button>
+    </div>
+
+    <ul id="taskList"></ul>
+
+    <script>
+      const taskList = document.getElementById("taskList");
+      const taskInput = document.getElementById("taskInput");
+
+      document.getElementById("addTaskButton").onclick = function () {
+        const taskText = taskInput.value.trim();
+        if (taskText) {
+          addTask(taskText);
+          taskInput.value = "";
+        }
+      };
+
+      function addTask(text) {
+        const li = document.createElement("li");
+        li.textContent = text;
+        li.onclick = function () {
+          this.classList.toggle("completed");
+        };
+        li.ondblclick = function () {
+          const newText = prompt("Редактируйте задачу:", this.textContent);
+          if (newText !== null) {
+            this.textContent = newText;
+          }
+        };
+
+        const deleteButton = document.createElement("button");
+        deleteButton.textContent = "Удалить";
+        deleteButton.onclick = function (event) {
+          event.stopPropagation(); // предотвращаем срабатывание клика по li
+          taskList.removeChild(li);
+        };
+
+        li.appendChild(deleteButton);
+        taskList.appendChild(li);
+      }
+
+      function filterTasks(status) {
+        const items = taskList.getElementsByTagName("li");
+
+        for (let item of items) {
+          const isCompleted = item.classList.contains("completed");
+          if (status === "all") {
+            item.style.display = "";
+          } else if (status === "completed") {
+            item.style.display = isCompleted ? "" : "none";
+          } else if (status === "incomplete") {
+            item.style.display = !isCompleted ? "" : "none";
+          }
+        }
+      }
+    </script>
+  </body>
+</html>
